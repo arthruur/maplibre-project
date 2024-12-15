@@ -1,5 +1,5 @@
-import logo from "../assets/mapbiomas-complete-logo-E1zO2n1p.png";
-import mining from "../assets/mining.png"
+import logo from "../assets/logo.svg";
+import mining from "../assets/mining.svg"
 import { Moon } from "lucide-react";
 
 export function Header() {
@@ -10,7 +10,7 @@ export function Header() {
         {/* Seção da esquerda com logo e input */}
         <div className="flex flex-row align-middle items-center gap-[8px]">
           <img src={mining} alt="Ícone de picareta" className="h-[48px]" />
-          <img src={logo} alt="Mapbiomas logo" className="h-[24px]" />
+          <img src={logo} alt="Mapbiomas logo" className="h-[28x]" />
         </div>
 
         {/* Nova seção com ícones */}
