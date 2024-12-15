@@ -55,7 +55,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
           source: 'camada1-source',
           paint: {
             'fill-color': '#198EC8',
-            'fill-opacity': 0.6,
+            'fill-opacity': 1,
           },
         });
       }
