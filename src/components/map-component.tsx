@@ -5,8 +5,9 @@ import MouseCoordinates from './ui/mouse-coordinates';
 import ScaleControlComponent from './ui/scale-control';
 import geodatin from '../assets/geodatin.png';
 import { MapControls } from './ui/map-controls';
+import MapLayers from './ui/layer-dropdown';
 
-const MapWithMouseCoordinates: React.FC = () => {
+const Map: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, lng: 0, lat: 0 });
@@ -50,7 +51,6 @@ const MapWithMouseCoordinates: React.FC = () => {
       });
     }
   };
-  
 
 
   return (
@@ -65,6 +65,16 @@ const MapWithMouseCoordinates: React.FC = () => {
 
       {/* Componente de escala */}
       <ScaleControlComponent map={map.current} />
+      
+      {/* Componente de Camadas */}
+
+      <div className="absolute top-10 left-5 z-10">
+
+      <MapLayers map={map.current} /> 
+      </div>
+
+
+
 
       {/* Componente de controle do mapa */}
       {map.current && (
@@ -79,11 +89,12 @@ const MapWithMouseCoordinates: React.FC = () => {
       <MouseCoordinates coordinates={coordinates} handleLocateClick={handleLocateClick} />
 
       <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-6">
+
         <img src={geodatin} alt="Mapbiomas logo" className="h-[24px] filter invert" />
       </div>
     </div>
   );
 };
 
-export default MapWithMouseCoordinates;
+export default Map;
 

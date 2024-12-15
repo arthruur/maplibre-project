@@ -23,9 +23,6 @@ const LocationInfo: React.FC<LocationInfoProps> = ({ lng, lat }) => {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span role="img" aria-label="location-icon">
-          📍
-        </span>
         <div>
           <div>
             <strong>Longitude:</strong> {lng.toFixed(5)}

@@ -56,8 +56,4 @@ export default {
         }
     },
     plugins: [tailwindcssAnimate],
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> 5f729b8e6a2c623327e0e64d674aa28cf6f2b2e7

@@ -3,6 +3,7 @@ import mining from "../assets/mining.png"
 import { Moon } from "lucide-react";
 
 export function Header() {
+  
   return (
     <header>
       <div className="flex border-b border-gray-300 flex-row w-screen justify-between gap-[20px] p-[20px]">

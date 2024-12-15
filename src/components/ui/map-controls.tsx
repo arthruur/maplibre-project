@@ -71,11 +71,15 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
   // Reseta o bearing e o pitch para 0
   const resetBearingAndPitch = useCallback(() => {
-    map.rotateTo(0); // Restaura a rotação
-    map.setPitch(0); // Restaura o pitch
+    map.easeTo({
+      bearing: 0,
+      pitch: 0,
+      duration: 300
+    });
     setBearing(0);
     setPitch(0);
   }, [map]);
+
 
   return (
     <div className="fixed left-0 bottom-24 flex flex-col gap-2 p-4">
@@ -91,7 +95,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
           className="h-4 w-4"
           style={{
             transform: `rotate(${bearing}deg) rotateX(${pitch}deg)`,
-            transition: "transform 0.3s ease-in-out",
           }}
         />
       </Button>
