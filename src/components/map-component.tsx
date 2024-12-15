@@ -13,6 +13,19 @@ const Map: React.FC = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, lng: 0, lat: 0 });
   const [zoom] = useState(3.5); // Estado para o zoom
   const [isExpanded, setIsExpanded] = useState(true); // Estado para o mapa expandido
+  const [isFullscreen, setIsFullscreen] = useState(false); // Estado para controlar fullscreen
+
+  // Função para alternar entre fullscreen e normal
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      if (mapContainer.current) {
+        mapContainer.current.requestFullscreen();
+      }
+    } else {
+      document.exitFullscreen();
+    }
+    setIsFullscreen(!isFullscreen);
+  };
 
   useEffect(() => {
     // Inicializa o mapa
@@ -35,7 +48,6 @@ const Map: React.FC = () => {
       });
     });
 
-
     return () => map.current?.remove(); // Remove o mapa ao desmontar o componente
   }, [zoom]); // Adiciona zoom como dependência para atualizar o mapa
 
@@ -52,6 +64,20 @@ const Map: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    // Adiciona um ouvinte para detectar quando o fullscreen é alterado
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setIsFullscreen(false);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   return (
     <div className="relative w-full h-screen">
@@ -59,37 +85,33 @@ const Map: React.FC = () => {
       <div
         ref={mapContainer}
         className={`transition-all duration-500 ${
-          isExpanded ? 'w-full h-full' : 'w-[60%] h-[100%]'
+          isFullscreen ? 'w-full h-full' : isExpanded ? 'w-full h-full' : 'w-[60%] h-[100%]'
         }`}
       ></div>
 
       {/* Componente de escala */}
       <ScaleControlComponent map={map.current} />
-      
+
       {/* Componente de Camadas */}
-
       <div className="absolute top-10 left-5 z-10">
-
-      <MapLayers map={map.current} /> 
+        <MapLayers map={map.current} />
       </div>
-
-
-
 
       {/* Componente de controle do mapa */}
       {map.current && (
-  <MapControls
-    map={map.current}
-    initialZoom={zoom}
-    initialIsExpanded={isExpanded}
-    setIsExpanded={setIsExpanded}
-  />)} 
+        <MapControls
+          map={map.current}
+          initialZoom={zoom}
+          initialIsExpanded={isExpanded}
+          setIsExpanded={setIsExpanded}
+          toggleFullscreen={toggleFullscreen}
+        />
+      )}
 
       {/* Informações do mouse */}
       <MouseCoordinates coordinates={coordinates} handleLocateClick={handleLocateClick} />
 
       <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-6">
-
         <img src={geodatin} alt="Mapbiomas logo" className="h-[24px] filter invert" />
       </div>
     </div>
@@ -97,4 +119,3 @@ const Map: React.FC = () => {
 };
 
 export default Map;
-

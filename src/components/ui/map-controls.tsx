@@ -7,16 +7,17 @@ interface MapControlsProps {
   initialZoom?: number;
   initialIsExpanded?: boolean;
   setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleFullscreen: () => void; 
 }
 
 export const MapControls: React.FC<MapControlsProps> = ({
   map,
   initialIsExpanded = true,
-  setIsExpanded,
+  toggleFullscreen,
 }) => {
   const [bearing, setBearing] = useState(0);
   const [pitch, setPitch] = useState(0);
-  const [isExpanded, setInternalIsExpanded] = useState(initialIsExpanded);
+  const [isExpanded] = useState(initialIsExpanded);
 
   // Sincroniza o zoom com o estado real do mapa
   useEffect(() => {
@@ -60,14 +61,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
     [map]
   );
 
-  // Alterna o estado do tamanho do mapa
-  const toggleMapSize = useCallback(() => {
-    setInternalIsExpanded((prev) => {
-      const newState = !prev;
-      setIsExpanded(newState); // Atualiza o estado externo
-      return newState;
-    });
-  }, [setIsExpanded]);
 
   // Reseta o bearing e o pitch para 0
   const resetBearingAndPitch = useCallback(() => {
@@ -126,7 +119,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
         variant="secondary"
         size="icon"
         className="rounded-full"
-        onClick={toggleMapSize}
+        onClick={toggleFullscreen}
         title={isExpanded ? "Minimizar mapa" : "Maximizar mapa"}
       >
         {isExpanded ? (
