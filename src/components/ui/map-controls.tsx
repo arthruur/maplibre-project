@@ -1,87 +1,81 @@
-import { Button } from "@/components/ui/button"
-import { Plus, Minus, Navigation2, Maximize2, Minimize2 } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button";
+import { Plus, Minus, Navigation2, Maximize2, Minimize2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
 
 interface MapControlsProps {
-  map: maplibregl.Map
-  initialZoom?: number
-  initialIsExpanded?: boolean
-  setIsExpanded: React.Dispatch<React.SetStateAction<boolean>> // Prop para receber a função setIsExpanded
+  map: maplibregl.Map;
+  initialZoom?: number;
+  initialIsExpanded?: boolean;
+  setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const MapControls: React.FC<MapControlsProps> = ({
   map,
-  initialZoom = 100,
   initialIsExpanded = true,
-  setIsExpanded, // Recebe a função setIsExpanded como prop
+  setIsExpanded,
 }) => {
-  const [zoom, setZoom] = useState(initialZoom)
-  const [bearing, setBearing] = useState(0) // Estado para armazenar a rotação da bússola
-  const [pitch, setPitch] = useState(0) // Estado para armazenar a inclinação do mapa
+  const [bearing, setBearing] = useState(0);
+  const [pitch, setPitch] = useState(0);
+  const [isExpanded, setInternalIsExpanded] = useState(initialIsExpanded);
 
-  // Função para controlar o zoom
-  const handleZoom = (type: 'in' | 'out') => {
-    if (type === 'in') {
-      const newZoom = zoom + 1
-      map.setZoom(newZoom)
-      setZoom(newZoom)
-    }
-    if (type === 'out') {
-      const newZoom = zoom - 1
-      map.setZoom(newZoom)
-      setZoom(newZoom)
-    }
-  }
-
-  // Função para alternar o tamanho do mapa (expandido ou minimizado)
-  const toggleMapSize = () => {
-    setIsExpanded(prevState => !prevState) // Usando a função setIsExpanded passada como prop
-  }
-
-  // Função para atualizar o ângulo da bússola conforme a rotação do mapa
-  const updateCompass = () => {
-    const currentBearing = map.getBearing()
-    setBearing(currentBearing)
-  }
-
-  // Usando useEffect para escutar a rotação do mapa
+  // Sincroniza o zoom com o estado real do mapa
   useEffect(() => {
-    map.on('rotate', updateCompass) // Adiciona o evento de rotação do mapa
+    const updateZoom = () => {
+      // Remove setZoom since it's not being used
+      map.getZoom();
+    };
+    map.on("zoom", updateZoom);
     return () => {
-      map.off('rotate', updateCompass) // Limpa o evento de rotação ao desmontar o componente
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map])
+      map.off("zoom", updateZoom);}
+  }, [map]);
 
+  // Sincroniza a rotação (bearing) com o estado real do mapa
   useEffect(() => {
-    if (map.getPitch()) {
-      // Atualiza o pitch no estado sempre que o mapa mudar de pitch
-      const updatePitch = () => {
-        const newPitch = map.getPitch();
-        setPitch(newPitch);
-      };
-  
-      map.on('pitch', updatePitch); // Adiciona o evento para monitorar mudanças no pitch
-  
-      return () => {
-        map.off('pitch', updatePitch); // Limpa o evento ao desmontar o componente
-      };
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Este useEffect deve ser executado apenas uma vez, ao montar o componente
-  
+    const updateBearing = () => setBearing(map.getBearing());
+    map.on("rotate", updateBearing);
+    return () => {
+      map.off("rotate", updateBearing);
+    };
+  }, [map]);
 
+  // Sincroniza o pitch (inclinação) com o estado real do mapa
+  useEffect(() => {
+    const updatePitch = () => setPitch(map.getPitch());
+    map.on("pitch", updatePitch);
+    return () => {
+      map.off("pitch", updatePitch);
+    };
+  }, [map]);
 
-  // Função para controlar o pitch (inclinação) do mapa
-  const handlePitch = () => {
-    let newPitch = pitch
-    
-    newPitch = 0; // Resetando o pitch para 0
+  // Função para alterar o zoom, com limites de zoom mínimo/máximo
+  const handleZoom = useCallback(
+    (type: "in" | "out") => {
+      const currentZoom = map.getZoom();
+      const newZoom =
+        type === "in"
+          ? Math.min(currentZoom + 1, map.getMaxZoom())
+          : Math.max(currentZoom - 1, map.getMinZoom());
+      map.setZoom(newZoom);
+    },
+    [map]
+  );
 
-    map.setPitch(newPitch)
-    setPitch(newPitch)
-  }
-  console.log(pitch)
+  // Alterna o estado do tamanho do mapa
+  const toggleMapSize = useCallback(() => {
+    setInternalIsExpanded((prev) => {
+      const newState = !prev;
+      setIsExpanded(newState); // Atualiza o estado externo
+      return newState;
+    });
+  }, [setIsExpanded]);
+
+  // Reseta o bearing e o pitch para 0
+  const resetBearingAndPitch = useCallback(() => {
+    map.rotateTo(0); // Restaura a rotação
+    map.setPitch(0); // Restaura o pitch
+    setBearing(0);
+    setPitch(0);
+  }, [map]);
 
   return (
     <div className="fixed left-0 bottom-24 flex flex-col gap-2 p-4">
@@ -90,28 +84,26 @@ export const MapControls: React.FC<MapControlsProps> = ({
         variant="secondary"
         size="icon"
         className="rounded-full"
-        onClick={() => {
-          // Restaurando a rotação (bearing) e o pitch
-          map.rotateTo(0);  // Restaura a rotação para 0
-          map.setBearing(0); // Restaura o ângulo de rotação
-          handlePitch(); // Reseta o pitch para 0
-        }}
+        onClick={resetBearingAndPitch}
+        title="Resetar rotação e inclinação"
       >
         <Navigation2
           className="h-4 w-4"
           style={{
-            transform: `rotate(${bearing}deg) rotateX(${pitch}deg)`, // Rotaciona o ícone da bússola
-            transition: 'transform 0.3s ease-in-out', // Transição suave
+            transform: `rotate(${bearing}deg) rotateX(${pitch}deg)`,
+            transition: "transform 0.3s ease-in-out",
           }}
         />
-
       </Button>
+
+      {/* Controles de zoom */}
       <div className="flex flex-col gap-1">
         <Button
           variant="secondary"
           size="icon"
           className="rounded-full"
-          onClick={() => handleZoom('in')}
+          onClick={() => handleZoom("in")}
+          title="Aumentar zoom"
         >
           <Plus className="h-4 w-4" />
         </Button>
@@ -119,25 +111,27 @@ export const MapControls: React.FC<MapControlsProps> = ({
           variant="secondary"
           size="icon"
           className="rounded-full"
-          onClick={() => handleZoom('out')}
+          onClick={() => handleZoom("out")}
+          title="Diminuir zoom"
         >
           <Minus className="h-4 w-4" />
         </Button>
       </div>
 
+      {/* Controle de tamanho do mapa */}
       <Button
         variant="secondary"
         size="icon"
         className="rounded-full"
         onClick={toggleMapSize}
+        title={isExpanded ? "Minimizar mapa" : "Maximizar mapa"}
       >
-        {initialIsExpanded ? (
+        {isExpanded ? (
           <Minimize2 className="h-4 w-4" />
         ) : (
           <Maximize2 className="h-4 w-4" />
         )}
       </Button>
-
     </div>
-  )
-}
+  );
+};
