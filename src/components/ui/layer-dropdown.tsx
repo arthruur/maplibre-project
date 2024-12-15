@@ -46,7 +46,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       if (layer === 'camada1') {
         map.addSource('camada1-source', {
           type: 'geojson',
-          data: 'src/layers/map.geojson', // Usando o GeoJSON carregado
+          data: 'src/layers/map.json', // Usando o GeoJSON carregado
         });
 
         map.addLayer({
@@ -62,7 +62,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       else if (layer === 'camada2') {
         map.addSource('camada2-source', {
           type: 'geojson',
-          data: 'src/layers/map(1).geojson', // Usando o GeoJSON carregado
+          data: 'src/layers/map(1).json', // Usando o GeoJSON carregado
         });
 
         map.addLayer({
@@ -78,7 +78,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       else if (layer === 'camada3') {
         map.addSource('camada3-source', {
           type: 'geojson',
-          data: 'src/layers/map (2).geojson',
+          data: 'src/layers/map (2).json',
         });
 
         map.addLayer({
@@ -90,7 +90,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       else if (layer === 'camada4') {
         map.addSource('camada4-source', {
           type: 'geojson',
-          data: 'src/layers/map (3).geojson', 
+          data: 'src/layers/map (3).json', 
         });
 
         map.addLayer({
