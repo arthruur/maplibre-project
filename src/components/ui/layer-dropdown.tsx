@@ -67,11 +67,11 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
 
         map.addLayer({
           id: 'camada2',
-          type: 'line',
+          type: 'fill',
           source: 'camada2-source',
           paint: {
-            'line-color': '#FF0000',
-            'line-width': 2,
+            'fill-color': '#FF0000',
+            'fill-opacity': 0.6,
           },
         });
       }
