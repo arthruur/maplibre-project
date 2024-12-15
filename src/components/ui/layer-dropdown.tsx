@@ -46,7 +46,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       if (layer === 'camada1') {
         map.addSource('camada1-source', {
           type: 'geojson',
-          data: 'src/layers/map.json', // Usando o GeoJSON carregado
+          data: 'src/layers/map.geojson', // Usando o GeoJSON carregado
         });
 
         map.addLayer({
