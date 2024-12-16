@@ -143,7 +143,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
         setLayersOrder(reorderedLayers);
       }}
     >
-      <DropdownMenu open={true}>
+      <DropdownMenu>
         <DropdownMenuTrigger
           className="flex items-center justify-center gap-2 rounded-full bg-white p-3 shadow-md hover:bg-gray-200 transition-all"
         >
