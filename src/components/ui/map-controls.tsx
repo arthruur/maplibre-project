@@ -87,7 +87,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
         <Navigation2
           className="h-4 w-4"
           style={{
-            transform: `rotate(${bearing}deg) rotateX(${pitch}deg)`,
+            transform: `rotate(${-bearing}deg) rotateX(${pitch}deg)`,
           }}
         />
       </Button>
