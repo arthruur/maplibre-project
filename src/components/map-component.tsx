@@ -6,6 +6,8 @@ import ScaleControlComponent from './ui/scale-control';
 import geodatin from '../assets/geodatin.png';
 import { MapControls } from './ui/map-controls';
 import MapLayers from './ui/layer-dropdown';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend'; // Backend do HTML5
 
 const Map: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -94,7 +96,9 @@ const Map: React.FC = () => {
 
       {/* Componente de Camadas */}
       <div className="absolute top-10 left-5 z-10">
+      <DndProvider backend={HTML5Backend}>
         <MapLayers map={map.current} />
+        </DndProvider>
       </div>
 
       {/* Componente de controle do mapa */}
