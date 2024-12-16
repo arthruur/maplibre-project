@@ -82,7 +82,7 @@ const Map: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-full">
       {/* Container do mapa com largura e altura condicionais */}
       <div
         ref={mapContainer}
