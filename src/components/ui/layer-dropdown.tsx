@@ -10,6 +10,8 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import 'styled-jsx/css'
+import { GripVertical } from 'lucide-react'; // Ícone de arrastar (três linhas)
 
 interface MapLayersProps {
   map: maplibregl.Map | null;
@@ -21,6 +23,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
     { id: 'camada2', label: 'Vermelho - 60%' },
     { id: 'camada3', label: 'Pontos pretos' },
     { id: 'camada4', label: 'Linhas pretas' },
+    { id: 'camada5', label: 'Mapa de calor' },
   ]);
   
   const [selectedLayers, setSelectedLayers] = useState<string[]>([]);
@@ -38,6 +41,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
   useEffect(() => {
     if (!map) return;
   
+    // Remove layers and sources before adding again
     layersOrder.forEach(({ id }) => {
       if (map.getLayer(id)) {
         map.removeLayer(id);
@@ -102,6 +106,18 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
             source: 'camada4-source',
           });
         }
+        else if (id === 'camada5') {
+          map.addSource('camada5-source', {
+            type: 'geojson',
+            data: 'src/layers/map (3).json', // Certifique-se de que este arquivo existe
+          });
+      
+          map.addLayer({
+            id: 'camada5',
+            type: 'heatmap',
+            source: 'camada5-source',
+          });
+        }
       }
     });
 
@@ -135,37 +151,82 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
           <span className="text-gray-600"> Legendas </span>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="rounded-lg bg-white p-2 shadow-lg ml-6 mt-2">
-          <DropdownMenuLabel className="font-semibold text-gray-700">Escolha uma camada</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <Droppable droppableId="layers">
+        <DropdownMenuContent className="rounded-lg bg-white p-2 shadow-lg ml-4 mt-2">
+  <DropdownMenuLabel className="font-semibold text-gray-700">Escolha uma camada</DropdownMenuLabel>
+  <DropdownMenuSeparator />
+  <Droppable droppableId="layers">
+    {(provided) => (
+      <div ref={provided.innerRef} {...provided.droppableProps}>
+        {layersOrder.map(({ id, label }, index) => (
+          <Draggable key={id} draggableId={id} index={index}>
             {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                {layersOrder.map(({ id, label }, index) => (
-                  <Draggable key={id} draggableId={id} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="p-2 rounded hover:bg-gray-100 flex justify-between items-center"
-                      >
-                        <DropdownMenuCheckboxItem
-                          checked={selectedLayers.includes(id)}
-                          onCheckedChange={() => handleLayerToggle(id)}
-                          className="text-gray-800"
-                        >
-                          {label}
-                        </DropdownMenuCheckboxItem>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                className="p-2 rounded hover:bg-gray-100 flex justify-between items-center cursor-grab"
+              >
+                <div className="flex items-center gap-2">
+                  {/* Ícone de arrastar */}
+                  <div {...provided.dragHandleProps} className="cursor-grab">
+                    <GripVertical className="h-4 w-4 text-gray-500" />
+                  </div>
+
+                  {/* Legenda visual da camada */}
+                  <span
+                    className={`w-4 h-4 rounded-sm ${id === 'camada5' ? 'animated-gradient' : ''}`}
+                    style={{
+                      backgroundColor:
+                        id === 'camada1' ? '#198EC8' :
+                        id === 'camada2' ? '#FF0000' :
+                        id === 'camada3' ? 'black' :
+                        id === 'camada4' ? 'white' :
+                        id === 'camada5' ? 'transparent' : 'transparent',
+                      border: id === 'camada3' || id === 'camada4' ? '2px solid black' : 'none',
+                      ...(id === 'camada3' && { borderRadius: '100%' }),
+                      ...(id === 'camada5' && {
+                        background: 'linear-gradient(45deg, ' +
+                          '#0000FF, ' +  // Azul escuro (valor muito baixo)
+                          '#4169E1, ' +  // Azul royal (baixo)
+                          '#1E90FF, ' +  // Azul dodger (baixo-médio)
+                          '#00CED1, ' +  // Turquesa escuro (médio-baixo)
+                          '#32CD32, ' +  // Verde limão (médio)
+                          '#7CFC00, ' +  // Verde claro (médio)
+                          '#FFFF00, ' +  // Amarelo (médio-alto)
+                          '#FFA500, ' +  // Laranja (alto)
+                          '#FF4500, ' +  // Laranja vermelho (muito alto)
+                          '#FF0000, ' +  // Vermelho (máximo)
+                          '#8B0000',     // Vermelho escuro (extremamente alto)
+                        backgroundSize: '1000% 1000%',
+                        animation: 'gradientFlow 10s ease infinite',
+                      }),
+                    }}
+                  />
+                  <style>{`
+                    @keyframes gradientFlow {
+                      0% { background-position: 0% 50%; }
+                      50% { background-position: 100% 50%; }
+                      100% { background-position: 0% 50%; }
+                    }
+                  `}</style>
+
+                  {/* Texto da camada */}
+                  <DropdownMenuCheckboxItem
+                    checked={selectedLayers.includes(id)}
+                    onCheckedChange={() => handleLayerToggle(id)}
+                    className="text-gray-800"
+                  >
+                    {label}
+                  </DropdownMenuCheckboxItem>
+                </div>
               </div>
             )}
-          </Droppable>
-        </DropdownMenuContent>
+          </Draggable>
+        ))}
+        {provided.placeholder}
+      </div>
+    )}
+  </Droppable>
+</DropdownMenuContent>
       </DropdownMenu>
     </DragDropContext>
   );
