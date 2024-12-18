@@ -75,7 +75,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
 
 
   return (
-    <div className="fixed left-0 bottom-24 flex flex-col gap-2 p-4">
+    <div className="mt-[608px] flex flex-col gap-2 p-4">
       {/* Bússola */}
       <Button
         variant="secondary"
@@ -87,10 +87,11 @@ export const MapControls: React.FC<MapControlsProps> = ({
         <Navigation2
           className="h-4 w-4"
           style={{
-            transform: `rotate(${-bearing}deg) rotateX(${pitch}deg)`,
+            transform: `scale(${1 / Math.pow(Math.cos(pitch * (Math.PI / 180)), 0.5)}) 
+                        rotateX(${pitch}deg) 
+                        rotateZ(${-bearing}deg)`, // Combina o pitch e bearing na rotação
           }}
-        />
-      </Button>
+        />      </Button>
 
       {/* Controles de zoom */}
       <div className="flex flex-col gap-1">

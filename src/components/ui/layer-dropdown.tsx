@@ -17,6 +17,7 @@ const camada1 = '/layers/map.json';
 const camada2 = '/layers/map_1.json';
 const camada3 = '/layers/map_2.json';
 const camada4 = '/layers/map_3.json';
+
 interface MapLayersProps {
   map: maplibregl.Map | null;
 }

@@ -95,13 +95,14 @@ const Map: React.FC = () => {
       <ScaleControlComponent map={map.current} />
 
       {/* Componente de Camadas */}
-      <div className="absolute top-10 left-5 z-10">
+      <div className="absolute top-4 left-5 z-10">
       <DndProvider backend={HTML5Backend}>
         <MapLayers map={map.current} />
         </DndProvider>
       </div>
 
       {/* Componente de controle do mapa */}
+      <div className='absolute top-1 z-10'>
       {map.current && (
         <MapControls
           map={map.current}
@@ -111,6 +112,8 @@ const Map: React.FC = () => {
           toggleFullscreen={toggleFullscreen}
         />
       )}
+      </div>
+
 
       {/* Informações do mouse */}
       <MouseCoordinates coordinates={coordinates} handleLocateClick={handleLocateClick} />
