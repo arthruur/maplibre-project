@@ -13,6 +13,10 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import 'styled-jsx/css'
 import { GripVertical } from 'lucide-react'; // Ícone de arrastar (três linhas)
 
+const camada1 = '/layers/map.json';
+const camada2 = '/layers/map_1.json';
+const camada3 = '/layers/map_2.json';
+const camada4 = '/layers/map_3.json';
 interface MapLayersProps {
   map: maplibregl.Map | null;
 }
@@ -54,7 +58,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
         if (id === 'camada1') {
           map.addSource('camada1-source', {
             type: 'geojson',
-            data: 'src/layers/map.geojson',
+            data: camada1,
           });
           map.addLayer({
             id: 'camada1',
@@ -69,7 +73,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
         else if (id === 'camada2') {
           map.addSource('camada2-source', {
             type: 'geojson',
-            data: 'src/layers/map(1).json',
+            data: camada2,
           });
       
           map.addLayer({
@@ -85,7 +89,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
         else if (id === 'camada3') {
           map.addSource('camada3-source', {
             type: 'geojson',
-            data: 'src/layers/map (2).json',
+            data: camada3,
           });
       
           map.addLayer({
@@ -97,7 +101,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
         else if (id === 'camada4') {
           map.addSource('camada4-source', {
             type: 'geojson',
-            data: 'src/layers/map (3).json', 
+            data: camada4, 
           });
       
           map.addLayer({
@@ -109,7 +113,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
         else if (id === 'camada5') {
           map.addSource('camada5-source', {
             type: 'geojson',
-            data: 'src/layers/map (3).json', // Certifique-se de que este arquivo existe
+            data: camada4,
           });
       
           map.addLayer({
