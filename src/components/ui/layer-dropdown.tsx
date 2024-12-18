@@ -32,6 +32,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
   ]);
   
   const [selectedLayers, setSelectedLayers] = useState<string[]>([]);
+
   
   const handleLayerToggle = (layer: string) => {
     setSelectedLayers((prevSelectedLayers) => {
@@ -149,15 +150,15 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       }}
     >
       <DropdownMenu>
-        <DropdownMenuTrigger
-          className="flex items-center justify-center gap-2 rounded-full bg-white p-3 shadow-md hover:bg-gray-200 transition-all"
+        <DropdownMenuTrigger  
+          className="flex items-center justify-center gap-2 rounded-full bg-white dark:bg-gray-800 p-3 shadow-md hover:bg-gray-200 transition-all"
         >
-          <Layers size={20} className="text-gray-600" />
-          <span className="text-gray-600"> Legendas </span>
+          <Layers size={20} className="text-gray-600 dark:text-gray-200" />
+          <span className="text-gray-600 dark:text-gray-200"> Legendas </span>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="rounded-lg bg-white p-2 shadow-lg ml-4 mt-2">
-  <DropdownMenuLabel className="font-semibold text-gray-700">Escolha uma camada</DropdownMenuLabel>
+        <DropdownMenuContent className="rounded-lg dark:bg-gray-800 bg-white p-2 shadow-lg ml-5 mt-2">
+  <DropdownMenuLabel className="font-semibold text-gray-700 dark:text-gray-200">Escolha uma camada</DropdownMenuLabel>
   <DropdownMenuSeparator />
   <Droppable droppableId="layers">
     {(provided) => (
@@ -168,7 +169,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
               <div
                 ref={provided.innerRef}
                 {...provided.draggableProps}
-                className="p-2 rounded hover:bg-gray-100 flex justify-between items-center cursor-grab"
+                className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 flex justify-between items-center"
               >
                 <div className="flex items-center gap-2">
                   {/* Ícone de arrastar */}
@@ -217,11 +218,15 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
                   {/* Texto da camada */}
                   <DropdownMenuCheckboxItem
                     checked={selectedLayers.includes(id)}
-                    onCheckedChange={() => handleLayerToggle(id)}
-                    className="text-gray-800"
+                    onSelect={(e) => {
+                      e.preventDefault(); // Impede o fechamento do menu
+                      handleLayerToggle(id);
+                    }}
+                    className="text-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
                     {label}
                   </DropdownMenuCheckboxItem>
+
                 </div>
               </div>
             )}
@@ -236,5 +241,4 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
     </DragDropContext>
   );
 };
-
 export default MapLayers;

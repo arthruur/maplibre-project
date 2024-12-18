@@ -112,9 +112,9 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     {/* Ícone de olho posicionado corretamente à direita */}
     <span className="ml-2 flex items-center justify-center">
       {checked ? (
-        <Eye className="h-4 w-4 text-gray-800" />
+        <Eye className="h-4 w-4 text-gray-800 dark:text-gray-200" />
       ) : (
-        <EyeOff className="h-4 w-4 text-gray-800" />
+        <EyeOff className="h-4 w-4 text-gray-800 dark:text-gray-200" />
       )}
     </span>
   </DropdownMenuPrimitive.CheckboxItem>

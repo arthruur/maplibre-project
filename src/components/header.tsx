@@ -6,13 +6,21 @@ import { Moon } from "lucide-react";
 export function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Atualiza a classe no elemento <html> com base no estado do tema
+  // Recupera o tema do localStorage e atualiza o estado inicial
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    setIsDarkMode(storedTheme === "dark");
+  }, []);
+
+  // Atualiza a classe no elemento <html> e salva no localStorage
   useEffect(() => {
     const html = document.documentElement;
     if (isDarkMode) {
       html.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
       html.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   }, [isDarkMode]);
 
@@ -27,7 +35,7 @@ export function Header() {
         {/* Seção da esquerda com logo e input */}
         <div className="flex flex-row align-middle items-center gap-[8px]">
           <img src={mining} alt="Ícone de picareta" className="h-[48px]" />
-          <img src={logo} alt="Mapbiomas logo" className="h-[28x]" />
+          <img src={logo} alt="Mapbiomas logo" className="h-[28px]" />
         </div>
 
         {/* Nova seção com ícones */}
