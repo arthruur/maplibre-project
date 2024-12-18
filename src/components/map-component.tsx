@@ -9,25 +9,16 @@ import MapLayers from './ui/layer-dropdown';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend'; // Backend do HTML5
 
-const Map: React.FC = () => {
+interface MapProps {
+  isFullScreen: boolean; // Recebe o estado de tela cheia
+  toggleFullScreen: () => void; // Função para alternar o estado de tela cheia
+}
+
+const Map: React.FC<MapProps> = ({ isFullScreen, toggleFullScreen }) => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, lng: 0, lat: 0 });
   const [zoom] = useState(3.5); // Estado para o zoom
-  const [isExpanded, setIsExpanded] = useState(true); // Estado para o mapa expandido
-  const [isFullscreen, setIsFullscreen] = useState(false); // Estado para controlar fullscreen
-
-  // Função para alternar entre fullscreen e normal
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      if (mapContainer.current) {
-        mapContainer.current.requestFullscreen();
-      }
-    } else {
-      document.exitFullscreen();
-    }
-    setIsFullscreen(!isFullscreen);
-  };
 
   useEffect(() => {
     // Inicializa o mapa
@@ -51,7 +42,7 @@ const Map: React.FC = () => {
     });
 
     return () => map.current?.remove(); // Remove o mapa ao desmontar o componente
-  }, [zoom]); // Adiciona zoom como dependência para atualizar o mapa
+  }, [zoom]);
 
   // Função para centralizar o mapa no Brasil
   const handleLocateClick = () => {
@@ -66,29 +57,12 @@ const Map: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    // Adiciona um ouvinte para detectar quando o fullscreen é alterado
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        setIsFullscreen(false);
-      }
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, []);
-
   return (
     <div className="relative w-full h-full">
-      {/* Container do mapa com largura e altura condicionais */}
+      {/* Container do mapa, que ocupa toda a tela se em modo de tela cheia */}
       <div
         ref={mapContainer}
-        className={`transition-all duration-500 ${
-          isFullscreen ? 'w-full h-full' : isExpanded ? 'w-full h-full' : 'w-[60%] h-[100%]'
-        }`}
+        className={`transition-all duration-500 ${isFullScreen ? 'w-screen h-screen' : 'w-full h-full'}`}
       ></div>
 
       {/* Componente de escala */}
@@ -96,24 +70,22 @@ const Map: React.FC = () => {
 
       {/* Componente de Camadas */}
       <div className="absolute top-4 left-5 z-10">
-      <DndProvider backend={HTML5Backend}>
-        <MapLayers map={map.current} />
+        <DndProvider backend={HTML5Backend}>
+          <MapLayers map={map.current} />
         </DndProvider>
       </div>
 
       {/* Componente de controle do mapa */}
-      <div className='absolute top-1 z-10'>
-      {map.current && (
-        <MapControls
-          map={map.current}
-          initialZoom={zoom}
-          initialIsExpanded={isExpanded}
-          setIsExpanded={setIsExpanded}
-          toggleFullscreen={toggleFullscreen}
-        />
-      )}
+      <div className="absolute z-10 bottom-20">
+        {map.current && (
+          <MapControls
+            map={map.current}
+            initialZoom={zoom}
+            isFullScreen={isFullScreen}
+            toggleFullScreen={toggleFullScreen}
+          />
+        )}
       </div>
-
 
       {/* Informações do mouse */}
       <MouseCoordinates coordinates={coordinates} handleLocateClick={handleLocateClick} />

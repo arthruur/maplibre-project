@@ -5,32 +5,28 @@ import { useState, useEffect, useCallback } from "react";
 interface MapControlsProps {
   map: maplibregl.Map;
   initialZoom?: number;
-  initialIsExpanded?: boolean;
-  setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
-  toggleFullscreen: () => void; 
+  isFullScreen: boolean;
+  toggleFullScreen: () => void;
 }
 
 export const MapControls: React.FC<MapControlsProps> = ({
   map,
-  initialIsExpanded = true,
-  toggleFullscreen,
+  isFullScreen,
+  toggleFullScreen,
 }) => {
   const [bearing, setBearing] = useState(0);
   const [pitch, setPitch] = useState(0);
-  const [isExpanded] = useState(initialIsExpanded);
 
-  // Sincroniza o zoom com o estado real do mapa
   useEffect(() => {
     const updateZoom = () => {
-      // Remove setZoom since it's not being used
       map.getZoom();
     };
     map.on("zoom", updateZoom);
     return () => {
-      map.off("zoom", updateZoom);}
+      map.off("zoom", updateZoom);
+    };
   }, [map]);
 
-  // Sincroniza a rotação (bearing) com o estado real do mapa
   useEffect(() => {
     const updateBearing = () => setBearing(map.getBearing());
     map.on("rotate", updateBearing);
@@ -39,7 +35,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
     };
   }, [map]);
 
-  // Sincroniza o pitch (inclinação) com o estado real do mapa
   useEffect(() => {
     const updatePitch = () => setPitch(map.getPitch());
     map.on("pitch", updatePitch);
@@ -48,7 +43,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
     };
   }, [map]);
 
-  // Função para alterar o zoom, com limites de zoom mínimo/máximo
   const handleZoom = useCallback(
     (type: "in" | "out") => {
       const currentZoom = map.getZoom();
@@ -61,8 +55,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
     [map]
   );
 
-
-  // Reseta o bearing e o pitch para 0
   const resetBearingAndPitch = useCallback(() => {
     map.easeTo({
       bearing: 0,
@@ -73,9 +65,8 @@ export const MapControls: React.FC<MapControlsProps> = ({
     setPitch(0);
   }, [map]);
 
-
   return (
-    <div className="mt-[608px] flex flex-col gap-2 p-4">
+    <div className="flex flex-col gap-2 p-4">
       {/* Bússola */}
       <Button
         variant="secondary"
@@ -91,7 +82,8 @@ export const MapControls: React.FC<MapControlsProps> = ({
                         rotateX(${pitch}deg) 
                         rotateZ(${-bearing}deg)`, // Combina o pitch e bearing na rotação
           }}
-        />      </Button>
+        />
+      </Button>
 
       {/* Controles de zoom */}
       <div className="flex flex-col gap-1">
@@ -120,10 +112,10 @@ export const MapControls: React.FC<MapControlsProps> = ({
         variant="secondary"
         size="icon"
         className="rounded-full"
-        onClick={toggleFullscreen}
-        title={isExpanded ? "Minimizar mapa" : "Maximizar mapa"}
+        onClick={toggleFullScreen}
+        title={isFullScreen ? "Minimizar mapa" : "Maximizar mapa"}
       >
-        {isExpanded ? (
+        {isFullScreen ? (
           <Minimize2 className="h-4 w-4" />
         ) : (
           <Maximize2 className="h-4 w-4" />
