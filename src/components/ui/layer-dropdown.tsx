@@ -55,7 +55,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       }
     });
   
-    layersOrder.forEach(({ id }) => {
+    [...layersOrder].reverse().forEach(({ id }) => {
       if (selectedLayers.includes(id)) {
         if (id === 'camada1') {
           map.addSource('camada1-source', {
