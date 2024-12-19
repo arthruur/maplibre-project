@@ -5,29 +5,39 @@ import { Moon } from "lucide-react";
 
 export function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Novo estado para carregamento
 
   // Recupera o tema do localStorage e atualiza o estado inicial
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
-    setIsDarkMode(storedTheme === "dark");
+    if (storedTheme) {
+      setIsDarkMode(storedTheme === "dark");
+    }
+    setIsLoading(false); // Quando terminar o carregamento, defina o estado como false
   }, []);
 
   // Atualiza a classe no elemento <html> e salva no localStorage
   useEffect(() => {
-    const html = document.documentElement;
-    if (isDarkMode) {
-      html.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      html.classList.remove("dark");
-      localStorage.setItem("theme", "light");
+    if (!isLoading) { // Verifica se o carregamento terminou
+      const html = document.documentElement;
+      if (isDarkMode) {
+        html.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+      } else {
+        html.classList.remove("dark");
+        localStorage.setItem("theme", "light");
+      }
     }
-  }, [isDarkMode]);
+  }, [isDarkMode, isLoading]); // Dependência do isLoading para garantir que só execute depois do carregamento
 
   // Alterna o estado do tema
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
   };
+
+  if (isLoading) {
+    return null; // Pode retornar um carregamento ou simplesmente nada enquanto o estado isLoading for true
+  }
 
   return (
     <header>
