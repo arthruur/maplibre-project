@@ -23,8 +23,6 @@ function App() {
 
   return (
     <div className={`flex flex-col h-[100svh]`}>
-      {/* O Header só será exibido se não estiver em tela cheia */}
-      {!isFullScreen && <Header />}
       
       {/* Passando o estado de tela cheia para o MapComponent */}
       <MapComponent isFullScreen={isFullScreen} toggleFullScreen={toggleFullScreen} />
