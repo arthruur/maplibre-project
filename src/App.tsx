@@ -22,7 +22,7 @@ function App() {
   };
 
   return (
-    <div className={`flex flex-col h-[100dvh] ${isFullScreen ? 'overflow-hidden' : ''}`}>
+    <div className={`flex flex-col h-[100dvh]`}>
       {/* O Header só será exibido se não estiver em tela cheia */}
       {!isFullScreen && <Header />}
       
