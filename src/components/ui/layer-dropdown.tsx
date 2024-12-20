@@ -31,7 +31,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
     { id: 'camada5', label: 'Mapa de calor' },
   ]);
   
-  const [selectedLayers, setSelectedLayers] = useState<string[]>([]);
+  const [selectedLayers, setSelectedLayers] = useState<string[]>(['camada4', 'camada5']);
 
   
   const handleLayerToggle = (layer: string) => {
