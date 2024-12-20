@@ -138,11 +138,10 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
   }, [map, layersOrder, selectedLayers]);
 
   return (
-    <DragDropContext
+<DragDropContext
     onDragEnd={(result) => {
       if (!result.destination) {
-        // Se o item não for solto em um destino válido, removemos a transformação
-        return;
+        return; // Não há necessidade de resetar a ordem
       }
         const reorderedLayers = Array.from(layersOrder);
         const [removed] = reorderedLayers.splice(result.source.index, 1);
@@ -173,9 +172,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
                 className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 flex justify-between items-center"
                 style={{
                   ...provided.draggableProps.style,
-                  ...(snapshot.isDragging && provided.draggableProps.style && {
-                    transform: `${provided.draggableProps.style.transform} translate(0px, -130px)`,
-                  }),
+                   transform: snapshot.isDragging ? `${provided.draggableProps.style?.transform || ''} translate(0px, -130px)` : undefined
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -211,13 +208,6 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
                       }),
                     }}
                   />
-                  <style>{`
-                    @keyframes gradientFlow {
-                      0% { background-position: 0% 50%; }
-                      50% { background-position: 100% 50%; }
-                      100% { background-position: 0% 50%; }
-                    }
-                  `}</style>
                   <DropdownMenuCheckboxItem
                     checked={selectedLayers.includes(id)}
                     onSelect={(e) => {
@@ -230,9 +220,17 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
                   </DropdownMenuCheckboxItem>
                 </div>
               </div>
+
             )}
           </Draggable>
         ))}
+        <style>{`
+          @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+        `}</style>
         {provided.placeholder}
       </div>
     )}
@@ -240,5 +238,5 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
 </DropdownMenuContent>
       </DropdownMenu>
     </DragDropContext>
-  );
+      );
 };export default MapLayers;
