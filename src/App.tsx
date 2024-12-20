@@ -22,7 +22,7 @@ function App() {
   };
 
   return (
-    <div className={`flex flex-col h-[100svh]`}>
+    <div className={`flex flex-col h-screen w-full`}>
       {/* O Header só será exibido se não estiver em tela cheia */}
       {!isFullScreen && <Header />}
       

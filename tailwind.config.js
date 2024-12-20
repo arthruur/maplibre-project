@@ -52,6 +52,9 @@ export default {
                     '4': 'hsl(var(--chart-4))',
                     '5': 'hsl(var(--chart-5))'
                 }
+            },
+            height: {
+                screen: '100dvh' // Substitui o 100vh por 100dvh
             }
         }
     },
