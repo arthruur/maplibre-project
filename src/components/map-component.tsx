@@ -54,7 +54,7 @@ const Map: React.FC<MapProps> = ({ isFullScreen, toggleFullScreen }) => {
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full flex-1 overflow-hidden">
       <div
         ref={mapContainer}
         className={`absolute inset-0 ${

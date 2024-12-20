@@ -19,10 +19,8 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full fixed inset-0">
-      <div className="flex-grow overflow-hidden">
+    <div className="flex flex-col min-h-[100dvh] w-full fixed inset-0">
       {!isFullScreen && <Header />}
-      </div>
       <MapComponent isFullScreen={isFullScreen} toggleFullScreen={toggleFullScreen} />
     </div>
   );
