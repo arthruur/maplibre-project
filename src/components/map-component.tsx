@@ -7,31 +7,28 @@ import geodatin from '../assets/geodatin.png';
 import { MapControls } from './ui/map-controls';
 import MapLayers from './ui/layer-dropdown';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend'; // Backend do HTML5
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 interface MapProps {
-  isFullScreen: boolean; // Recebe o estado de tela cheia
-  toggleFullScreen: () => void; // Função para alternar o estado de tela cheia
+  isFullScreen: boolean;
+  toggleFullScreen: () => void;
 }
 
 const Map: React.FC<MapProps> = ({ isFullScreen, toggleFullScreen }) => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, lng: 0, lat: 0 });
-  const [zoom] = useState(3.5); // Estado para o zoom
+  const [zoom] = useState(3.5);
 
   useEffect(() => {
-    // Inicializa o mapa
     map.current = new maplibregl.Map({
-      container: mapContainer.current || '', // container do mapa
-      style:
-        'https://api.maptiler.com/maps/dataviz/style.json?key=f03jIH1RTklhW7DPGIIJ',
-      center: [-51.9253, -14.2350], // Longitude, Latitude do centro do Brasil
-      zoom: zoom, // Usando o estado do zoom
-      pitch: 0 // Inclinação do mapa
+      container: mapContainer.current || '',
+      style: 'https://api.maptiler.com/maps/dataviz/style.json?key=f03jIH1RTklhW7DPGIIJ',
+      center: [-51.9253, -14.2350],
+      zoom: zoom,
+      pitch: 0
     });
 
-    // Evento de movimentação do mouse
     map.current.on('mousemove', (e) => {
       setCoordinates({
         x: e.point.x,
@@ -41,10 +38,9 @@ const Map: React.FC<MapProps> = ({ isFullScreen, toggleFullScreen }) => {
       });
     });
 
-    return () => map.current?.remove(); // Remove o mapa ao desmontar o componente
+    return () => map.current?.remove();
   }, [zoom]);
 
-  // Função para centralizar o mapa no Brasil
   const handleLocateClick = () => {
     if (map.current) {
       map.current.flyTo({
@@ -58,25 +54,23 @@ const Map: React.FC<MapProps> = ({ isFullScreen, toggleFullScreen }) => {
   };
 
   return (
-    <div className="relative w-full h-full">
-      {/* Container do mapa, que ocupa toda a tela se em modo de tela cheia */}
+    <div className="relative w-full h-full flex-1 overflow-hidden">
       <div
         ref={mapContainer}
-        className={`transition-all duration-500 ${isFullScreen ? 'w-screen h-screen' : 'w-full h-full'}`}
-      ></div>
-
-      {/* Componente de escala */}
+        className={`absolute inset-0 ${
+          isFullScreen ? 'fixed w-screen h-screen' : 'w-full h-full'
+        }`}
+      />
+      
       <ScaleControlComponent map={map.current} />
-
-      {/* Componente de Camadas */}
+      
       <div className="absolute top-4 left-5 z-10">
         <DndProvider backend={HTML5Backend}>
           <MapLayers map={map.current} />
         </DndProvider>
       </div>
 
-      {/* Componente de controle do mapa */}
-      <div className="absolute z-10 bottom-20">
+      <div className="absolute z-10 bottom-20 left-4">
         {map.current && (
           <MapControls
             map={map.current}
@@ -87,11 +81,17 @@ const Map: React.FC<MapProps> = ({ isFullScreen, toggleFullScreen }) => {
         )}
       </div>
 
-      {/* Informações do mouse */}
-      <MouseCoordinates coordinates={coordinates} handleLocateClick={handleLocateClick} />
+      <MouseCoordinates 
+        coordinates={coordinates} 
+        handleLocateClick={handleLocateClick} 
+      />
 
-      <div className="absolute bottom-0 left-0 right-0 flex justify-center pb-6">
-        <img src={geodatin} alt="Mapbiomas logo" className="h-[24px] filter invert" />
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+        <img 
+          src={geodatin} 
+          alt="Mapbiomas logo" 
+          className="h-6 filter invert"
+        />
       </div>
     </div>
   );
