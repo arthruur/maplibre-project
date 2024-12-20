@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Header } from "./components/header";
 import MapComponent from "./components/map-component";
 
 function App() {
