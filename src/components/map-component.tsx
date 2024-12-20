@@ -70,7 +70,7 @@ const Map: React.FC<MapProps> = ({ isFullScreen, toggleFullScreen }) => {
         </DndProvider>
       </div>
 
-      <div className="absolute z-10 bottom-20 left-4">
+      <div className="absolute z-10 bottom-20 left-1">
         {map.current && (
           <MapControls
             map={map.current}
