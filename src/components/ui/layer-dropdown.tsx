@@ -220,7 +220,6 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
                   </DropdownMenuCheckboxItem>
                 </div>
               </div>
-
             )}
           </Draggable>
         ))}
