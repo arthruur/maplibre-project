@@ -31,7 +31,7 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
     { id: 'camada5', label: 'Mapa de calor' },
   ]);
   
-  const [selectedLayers, setSelectedLayers] = useState<string[]>(['camada4', 'camada5']);
+  const [selectedLayers, setSelectedLayers] = useState<string[]>(['camada4', 'camada5']);  
 
   
   const handleLayerToggle = (layer: string) => {
@@ -139,16 +139,17 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
 
   return (
     <DragDropContext
-      onDragEnd={(result) => {
-        if (!result.destination) return;
-
+    onDragEnd={(result) => {
+      if (!result.destination) {
+        // Se o item não for solto em um destino válido, removemos a transformação
+        return;
+      }
         const reorderedLayers = Array.from(layersOrder);
         const [removed] = reorderedLayers.splice(result.source.index, 1);
         reorderedLayers.splice(result.destination.index, 0, removed);
 
         setLayersOrder(reorderedLayers);
-      }}
-    >
+      }}    >
       <DropdownMenu>
         <DropdownMenuTrigger  
           className="flex items-center justify-center gap-2 rounded-full bg-white dark:bg-gray-800 p-3 shadow-md hover:bg-gray-200 transition-all"
@@ -165,19 +166,22 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       <div ref={provided.innerRef} {...provided.droppableProps}>
         {layersOrder.map(({ id, label }, index) => (
           <Draggable key={id} draggableId={id} index={index}>
-            {(provided) => (
+            {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
                 {...provided.draggableProps}
                 className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 flex justify-between items-center"
+                style={{
+                  ...provided.draggableProps.style,
+                  ...(snapshot.isDragging && provided.draggableProps.style && {
+                    transform: `${provided.draggableProps.style.transform} translate(0px, -130px)`,
+                  }),
+                }}
               >
                 <div className="flex items-center gap-2">
-                  {/* Ícone de arrastar */}
                   <div {...provided.dragHandleProps} className="cursor-grab">
                     <GripVertical className="h-4 w-4 text-gray-500" />
                   </div>
-
-                  {/* Legenda visual da camada */}
                   <span
                     className={`w-4 h-4 rounded-sm ${id === 'camada5' ? 'animated-gradient' : ''}`}
                     style={{
@@ -191,17 +195,17 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
                       ...(id === 'camada3' && { borderRadius: '100%' }),
                       ...(id === 'camada5' && {
                         background: 'linear-gradient(45deg, ' +
-                          '#0000FF, ' +  // Azul escuro (valor muito baixo)
-                          '#4169E1, ' +  // Azul royal (baixo)
-                          '#1E90FF, ' +  // Azul dodger (baixo-médio)
-                          '#00CED1, ' +  // Turquesa escuro (médio-baixo)
-                          '#32CD32, ' +  // Verde limão (médio)
-                          '#7CFC00, ' +  // Verde claro (médio)
-                          '#FFFF00, ' +  // Amarelo (médio-alto)
-                          '#FFA500, ' +  // Laranja (alto)
-                          '#FF4500, ' +  // Laranja vermelho (muito alto)
-                          '#FF0000, ' +  // Vermelho (máximo)
-                          '#8B0000',     // Vermelho escuro (extremamente alto)
+                          '#0000FF, ' +
+                          '#4169E1, ' +
+                          '#1E90FF, ' +
+                          '#00CED1, ' +
+                          '#32CD32, ' +
+                          '#7CFC00, ' +
+                          '#FFFF00, ' +
+                          '#FFA500, ' +
+                          '#FF4500, ' +
+                          '#FF0000, ' +
+                          '#8B0000',
                         backgroundSize: '1000% 1000%',
                         animation: 'gradientFlow 10s ease infinite',
                       }),
@@ -214,19 +218,16 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
                       100% { background-position: 0% 50%; }
                     }
                   `}</style>
-
-                  {/* Texto da camada */}
                   <DropdownMenuCheckboxItem
                     checked={selectedLayers.includes(id)}
                     onSelect={(e) => {
-                      e.preventDefault(); // Impede o fechamento do menu
+                      e.preventDefault();
                       handleLayerToggle(id);
                     }}
                     className="text-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
                     {label}
                   </DropdownMenuCheckboxItem>
-
                 </div>
               </div>
             )}
@@ -240,5 +241,4 @@ const MapLayers: React.FC<MapLayersProps> = ({ map }) => {
       </DropdownMenu>
     </DragDropContext>
   );
-};
-export default MapLayers;
+};export default MapLayers;
