@@ -41,7 +41,7 @@ export function Header() {
 
   return (
     <header>
-      <div className="flex border-b border-red-600 border-4 dark:border-gray-700 flex-row w-screen h-fit justify-between p-[15px] bg-white dark:bg-gray-900">
+      <div className="flex border-b border-gray-300 dark:border-gray-700 flex-row w-screen justify-between p-[15px] bg-white dark:bg-gray-900">
         {/* Seção da esquerda com logo e input */}
         <div className="flex flex-row align-middle items-center gap-[8px]">
           <img src={mining} alt="Ícone de picareta" className="h-[48px]" />
