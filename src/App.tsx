@@ -3,18 +3,15 @@ import { Header } from "./components/header";
 import MapComponent from "./components/map-component";
 
 function App() {
-  const [isFullScreen, setIsFullScreen] = useState(false); // Estado para tela cheia
-
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  
   const toggleFullScreen = () => {
-    setIsFullScreen((prev) => !prev); // Alterna o estado de tela cheia
-
+    setIsFullScreen((prev) => !prev);
     if (!isFullScreen) {
-      // Solicita ao navegador entrar em modo tela cheia
       if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen(); // Tenta colocar o documento em tela cheia
+        document.documentElement.requestFullscreen();
       }
     } else {
-      // Solicita ao navegador sair do modo tela cheia
       if (document.exitFullscreen) {
         document.exitFullscreen();
       }
@@ -22,11 +19,8 @@ function App() {
   };
 
   return (
-    <div className={`flex flex-col h-screen w-full`}>
-      {/* O Header só será exibido se não estiver em tela cheia */}
+    <div className="flex flex-col min-h-screen w-full fixed inset-0 overflow-hidden">
       {!isFullScreen && <Header />}
-      
-      {/* Passando o estado de tela cheia para o MapComponent */}
       <MapComponent isFullScreen={isFullScreen} toggleFullScreen={toggleFullScreen} />
     </div>
   );
