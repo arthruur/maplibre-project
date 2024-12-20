@@ -58,7 +58,7 @@ const Map: React.FC<MapProps> = ({ isFullScreen, toggleFullScreen }) => {
   };
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-full">
       {/* Container do mapa, que ocupa toda a tela se em modo de tela cheia */}
       <div
         ref={mapContainer}
